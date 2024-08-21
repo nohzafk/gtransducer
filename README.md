@@ -93,7 +93,7 @@ For example, if you're summing numbers, `initial` might be 0 or some pre-existin
 
 ## Documentation
 
-For detailed documentation and more examples, visit [https://hexdocs.pm/transducer](https://hexdocs.pm/transducer).
+For detailed documentation and more examples, visit [https://hexdocs.pm/gtransducer](https://hexdocs.pm/gtransducer).
 
 ## Development
 
