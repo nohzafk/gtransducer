@@ -3,14 +3,14 @@ import gleam/list
 import gleeunit
 import gleeunit/should
 
-import transducer.{compose, filtering, mapping}
+import gtransducer.{compose, filtering, mapping}
 
 pub fn main() {
   gleeunit.main()
 }
 
 fn accumulate(data, transducer) {
-  transducer.reduce(data, [], transducer, fn(acc, x) { [x, ..acc] })
+  gtransducer.reduce(data, [], transducer, fn(acc, x) { [x, ..acc] })
   |> list.reverse()
 }
 
@@ -33,7 +33,7 @@ pub fn reduce_test() {
   let double = mapping(fn(x) { x * 2 })
   let sum = fn(acc, x) { acc + x }
 
-  transducer.reduce(data, 0, double, sum)
+  gtransducer.reduce(data, 0, double, sum)
   |> should.equal(30)
 }
 
@@ -42,7 +42,7 @@ pub fn reduce_with_filtering_test() {
   let even = filtering(fn(x) { int.remainder(x, 2) == Ok(0) })
   let sum = fn(acc, x) { acc + x }
 
-  transducer.reduce(data, 0, even, sum)
+  gtransducer.reduce(data, 0, even, sum)
   |> should.equal(30)
 }
 
@@ -55,7 +55,7 @@ pub fn reduce_with_compose_test() {
     )
   let sum = fn(acc, x) { acc + x }
 
-  transducer.reduce(data, 0, transducer, sum)
+  gtransducer.reduce(data, 0, transducer, sum)
   |> should.equal(60)
 }
 
@@ -64,7 +64,7 @@ pub fn reduce_empty_list_test() {
   let double = mapping(fn(x) { x * 2 })
   let sum = fn(acc, x) { acc + x }
 
-  transducer.reduce(data, 0, double, sum)
+  gtransducer.reduce(data, 0, double, sum)
   |> should.equal(0)
 }
 
@@ -98,7 +98,7 @@ pub fn parallel_reduce_test() {
   let initial = 7
 
   let parallel_result =
-    transducer.parallel_reduce(
+    gtransducer.parallel_reduce(
       data: data,
       initial: initial,
       transducer: double,
@@ -108,7 +108,7 @@ pub fn parallel_reduce_test() {
       num_workers: 4,
     )
 
-  let sequential_result = transducer.reduce(data, initial, double, sum)
+  let sequential_result = gtransducer.reduce(data, initial, double, sum)
 
   parallel_result
   |> should.equal(sequential_result)
@@ -127,7 +127,7 @@ pub fn parallel_reduce_compose_test() {
     )
 
   let parallel_result =
-    transducer.parallel_reduce(
+    gtransducer.parallel_reduce(
       data: data,
       initial: 0,
       transducer: t,
@@ -138,9 +138,12 @@ pub fn parallel_reduce_compose_test() {
     )
 
   let sequential_result =
-    transducer.reduce(data: data, initial: 0, transducer: t, reduce: fn(acc, x) {
-      acc + x
-    })
+    gtransducer.reduce(
+      data: data,
+      initial: 0,
+      transducer: t,
+      reduce: fn(acc, x) { acc + x },
+    )
 
   parallel_result |> should.equal(sequential_result)
 }

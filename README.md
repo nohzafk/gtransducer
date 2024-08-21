@@ -1,14 +1,14 @@
 # transducer
 
-[![Package Version](https://img.shields.io/hexpm/v/transducer)](https://hex.pm/packages/transducer)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/transducer/)
+[![Package Version](https://img.shields.io/hexpm/v/gtransducer)](https://hex.pm/packages/gtransducer)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/gtransducer/)
 
 A Gleam library for composable algorithmic transformations.
 
 ## Usage
 
 ```sh
-gleam add transducer
+gleam add gtransducer
 ```
 
 ## Features
@@ -26,7 +26,7 @@ Efficient: Processes data in a single pass
 ### Using `reduce`
 
 ```gleam
-import transducer.{compose, filtering, mapping}
+import gtransducer.{compose, filtering, mapping}
 import gleam/int
 
 let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -35,17 +35,17 @@ let transducer = compose(
   filtering(fn(x) { int.remainder(x, 4) == Ok(0) })
 )
 
-transducer.reduce(data, 0, transducer, fn(acc, x) { acc + x })
+gtransducer.reduce(data, 0, transducer, fn(acc, x) { acc + x })
 // result: 60
 
-transducer.reduce(data, [], transducer, fn(acc, x) { [x, ..acc] }) |> list.reverse()
+gtransducer.reduce(data, [], transducer, fn(acc, x) { [x, ..acc] }) |> list.reverse()
 // result: [4, 8, 12, 16, 20]
 ```
 
 ### Using `parallel_reduce`
 
 ```gleam
-import transducer.{compose, filtering, mapping}
+import gtransducer.{compose, filtering, mapping}
 import gleam/int
 import gleam/list
 
@@ -55,7 +55,7 @@ let transducer = compose(
   filtering(fn(x) { int.remainder(x, 4) == Ok(0) })
 )
 
-let result = transducer.parallel_reduce(
+let result = gtransducer.parallel_reduce(
   data: data,
   initial: 0,
   transducer: transducer,
