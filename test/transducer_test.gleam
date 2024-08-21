@@ -1,4 +1,3 @@
-import gleam/dynamic
 import gleam/int
 import gleam/list
 import gleeunit
