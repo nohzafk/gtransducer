@@ -30,7 +30,7 @@ pub fn reduce(
   data data: List(a),
   initial initial: r,
   transducer transducer: Transducer(a, b, r),
-  reduce reducer: fn(r, b) -> r,
+  reducer reducer: fn(r, b) -> r,
 ) -> r {
   let transformed_reducer = transducer(reducer)
   list.fold(data, initial, transformed_reducer)

@@ -142,7 +142,7 @@ pub fn parallel_reduce_compose_test() {
       data: data,
       initial: 0,
       transducer: t,
-      reduce: fn(acc, x) { acc + x },
+      reducer: fn(acc, x) { acc + x },
     )
 
   parallel_result |> should.equal(sequential_result)
