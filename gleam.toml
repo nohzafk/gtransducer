@@ -1,6 +1,7 @@
 name = "gtransducer"
 version = "1.0.0"
-description = ""
+description = "A transducer library for composable algorithmic transformations."
+
 licences = ["MIT"]
 repository = { type = "github", user = "nohzafk", repo = "gtransducer" }
 
