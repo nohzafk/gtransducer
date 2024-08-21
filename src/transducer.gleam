@@ -25,13 +25,12 @@ pub fn compose(
   fn(reducer) { reducer |> t2 |> t1 }
 }
 
-pub fn fold(
+pub fn reduce(
   data: List(a),
-  initial: List(b),
-  transducer: Transducer(a, b, List(b)),
-) -> List(b) {
-  let reducer = fn(acc: List(b), x: b) -> List(b) { [x, ..acc] }
+  initial: r,
+  transducer: Transducer(a, b, r),
+  reducer: fn(r, b) -> r,
+) -> r {
   let transformed_reducer = transducer(reducer)
   list.fold(data, initial, transformed_reducer)
-  |> list.reverse()
 }
