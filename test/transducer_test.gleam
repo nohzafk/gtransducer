@@ -1,3 +1,4 @@
+import gleam/dynamic
 import gleam/int
 import gleam/list
 import gleeunit
@@ -88,4 +89,59 @@ pub fn compose_multiple_test() {
     )
   accumulate(data, transducer)
   |> should.equal([12, 14, 16, 18, 20, 22])
+}
+
+pub fn parallel_reduce_test() {
+  let data = list.range(1, 100)
+  let double = mapping(fn(x) { x * 2 })
+  let sum = fn(acc, x) { acc + x }
+  let combine = fn(a, b) { a + b }
+  let initial = 7
+
+  let parallel_result =
+    transducer.parallel_reduce(
+      data: data,
+      initial: initial,
+      transducer: double,
+      reducer: sum,
+      combiner: combine,
+      neutral_element: fn() { 0 },
+      num_workers: 4,
+    )
+
+  let sequential_result = transducer.reduce(data, initial, double, sum)
+
+  parallel_result
+  |> should.equal(sequential_result)
+
+  parallel_result
+  |> should.equal(initial + 10_100)
+}
+
+pub fn parallel_reduce_compose_test() {
+  let data = list.range(1, 1_000_000)
+
+  let t =
+    compose(
+      mapping(fn(x) { x * 2 }),
+      filtering(fn(x) { int.remainder(x, 4) == Ok(0) }),
+    )
+
+  let parallel_result =
+    transducer.parallel_reduce(
+      data: data,
+      initial: 0,
+      transducer: t,
+      reducer: fn(acc, x) { acc + x },
+      combiner: fn(a, b) { a + b },
+      neutral_element: fn() { 0 },
+      num_workers: 4,
+    )
+
+  let sequential_result =
+    transducer.reduce(data: data, initial: 0, transducer: t, reduce: fn(acc, x) {
+      acc + x
+    })
+
+  parallel_result |> should.equal(sequential_result)
 }
