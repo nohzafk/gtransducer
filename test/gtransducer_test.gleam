@@ -147,3 +147,53 @@ pub fn parallel_reduce_compose_test() {
 
   parallel_result |> should.equal(sequential_result)
 }
+
+pub fn compose_order_test() {
+  let data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+  // Order 1: Filter even numbers, then multiply by 2
+  let xform1 =
+    compose(
+      filtering(fn(x) { int.remainder(x, 2) == Ok(0) }),
+      mapping(fn(x) { x * 2 }),
+    )
+
+  gtransducer.reduce(data, [], xform1, fn(acc, x) { [x, ..acc] })
+  |> should.equal([20, 16, 12, 8, 4])
+
+  // Order 2: Multiply by 2, then filter even numbers
+  let xform2 =
+    compose(
+      mapping(fn(x) { x * 2 }),
+      filtering(fn(x) { int.remainder(x, 2) == Ok(0) }),
+    )
+
+  gtransducer.reduce(data, [], xform2, fn(acc, x) { [x, ..acc] })
+  |> should.equal([20, 18, 16, 14, 12, 10, 8, 6, 4, 2])
+}
+
+pub fn example_test() {
+  let data = list.range(1, 10)
+
+  // Using list.reduce
+  let list_result =
+    data
+    |> list.filter(fn(x) { x % 2 == 0 })
+    |> list.map(fn(x) { x * x })
+    |> list.fold(0, fn(acc, x) { acc + x })
+
+  list_result |> should.equal(220)
+
+  // Using transducer.reduce
+  let xform = compose(filtering(fn(x) { x % 2 == 0 }), mapping(fn(x) { x * x }))
+
+  let transducer_result =
+    gtransducer.reduce(
+      data: data,
+      initial: 0,
+      transducer: xform,
+      reducer: fn(acc, x) { acc + x },
+    )
+
+  list_result |> should.equal(transducer_result)
+}
